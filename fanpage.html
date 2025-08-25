@@ -519,22 +519,23 @@
             margin-bottom: 18px;
         }
 
-        .secret-section button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px 18px;
-            border-radius: 999px;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--accent), var(--accent-2));
-            color: #061018;
-            border: none;
-            cursor: pointer;
-            transition: 0.25s;
-            font-size: 1rem;
-            margin: 0 auto;
-        }
+       .secret-section button {
+    display: block;       /* change from inline-flex */
+    margin: 0 auto;       /* center horizontally */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #061018;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 1rem;
+}
+
 
         .secret-section button:hover {
             transform: translateY(-2px);
@@ -684,7 +685,7 @@
     <header id="hero" class="hero wrap">
         <div class="hero-card glass reveal">
             <div class="hero-img">
-                <img src="jbpics/justin1.webp" alt="Justin Bieber portrait" />
+                <img src="jbpics/justin3.jpg" alt="Justin Bieber portrait" />
             </div>
             <h1 class="title">Justin Bieber</h1>
             <p class="subtitle pop-icons">Pop icon. Performer. Songwriter.</p>
