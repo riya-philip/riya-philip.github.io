@@ -441,38 +441,7 @@
             align-items: flex-start;
         }
 
-        .polaroid-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 50px;
-}
 
-.polaroid {
-    width: 180px;
-    padding: 10px;
-    background: #fff;
-    border: 2px solid #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-    transform: rotate(-2deg);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
-
-.polaroid:hover {
-    transform: scale(1.05) rotate(0deg); /* slight zoom & straighten */
-    box-shadow: 0 12px 20px rgba(0,0,0,0.3);
-}
-
-/* Optional: full-screen enlarge when clicked (using CSS modal trick) */
-.polaroid:active {
-    transform: scale(2.5) rotate(0deg);
-    z-index: 100;
-    position: relative;
-}
-
-/* 
         .polaroid {
             background: #fff;
             padding: 10px;
@@ -482,7 +451,7 @@
             border: 2px solid #eee;
             text-align: center;
             /* Ensures caption and image are centered */
-        
+        }
 
         /* Individual rotation for variety */
         .polaroid:nth-child(1) {
@@ -550,22 +519,29 @@
             margin-bottom: 18px;
         }
 
-       .secret-section button {
-    display: block;       /* change from inline-flex */
-    margin: 0 auto;       /* center horizontally */
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 18px;
-    border-radius: 999px;
-    font-weight: 700;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color: #061018;
-    border: none;
-    cursor: pointer;
-    transition: 0.25s;
-    font-size: 1rem;
-}
+        .secret-section button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #061018;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 1rem;
+            margin: 0 auto;
+        }
+
+        .secret-section form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* centers child items horizontally */
+        }
 
 
         .secret-section button:hover {
@@ -716,7 +692,7 @@
     <header id="hero" class="hero wrap">
         <div class="hero-card glass reveal">
             <div class="hero-img">
-                <img src="jbpics/justin3.jpg" alt="Justin Bieber portrait" />
+                <img src="jbpics/justin1.webp" alt="Justin Bieber portrait" />
             </div>
             <h1 class="title">Justin Bieber</h1>
             <p class="subtitle pop-icons">Pop icon. Performer. Songwriter.</p>
