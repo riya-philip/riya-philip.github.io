@@ -448,6 +448,17 @@
     margin-top: 50px;
 }
 
+.polaroid {
+    width: 180px;
+    padding: 10px;
+    background: #fff;
+    border: 2px solid #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    transform: rotate(-2deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
 
 .polaroid:hover {
     transform: scale(1.05) rotate(0deg); /* slight zoom & straighten */
@@ -461,7 +472,7 @@
     position: relative;
 }
 
-
+/* 
         .polaroid {
             background: #fff;
             padding: 10px;
@@ -471,7 +482,7 @@
             border: 2px solid #eee;
             text-align: center;
             /* Ensures caption and image are centered */
-        }
+        
 
         /* Individual rotation for variety */
         .polaroid:nth-child(1) {
