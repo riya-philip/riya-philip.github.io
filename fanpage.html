@@ -20,6 +20,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lobster&display=swap"
         rel="stylesheet">
 
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
 
     <style>
         /* ==========================
@@ -482,42 +490,42 @@
             color: #333;
         }
 
-/* =====
+        /* =====
 /* ==========================
    Lightbox for Polaroid Click
 ========================== */
-.lightbox {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-}
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
 
-.lightbox-img {
-  max-width: 90%;
-  max-height: 80vh;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  transition: transform 0.3s ease;
-}
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
 
-.lightbox .close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: #fff;
-  font-size: 2rem;
-  cursor: pointer;
-  font-weight: bold;
-  z-index: 10000;
-}
+        .lightbox .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10000;
+        }
 
 
         /* ==========================
@@ -702,6 +710,99 @@
                 height: 300px;
             }
         }
+
+        /* JB Fact Pop Animation */
+        @keyframes popFade {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .fact.pop {
+            animation: popFade 0.4s ease;
+        }
+
+
+        /* ==========================
+   Animated Background Bubbles
+========================== */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 50%;
+            animation: float 20s linear infinite;
+        }
+
+        .bubble:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .bubble:nth-child(2) {
+            left: 30%;
+            animation-delay: 2s;
+            animation-duration: 20s;
+        }
+
+        .bubble:nth-child(3) {
+            left: 50%;
+            animation-delay: 4s;
+            animation-duration: 22s;
+        }
+
+        .bubble:nth-child(4) {
+            left: 70%;
+            animation-delay: 1s;
+            animation-duration: 18s;
+        }
+
+        .bubble:nth-child(5) {
+            left: 90%;
+            animation-delay: 3s;
+            animation-duration: 28s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-120vh) scale(1.5);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -861,6 +962,7 @@
                 <button id="factBtn">Tell me a JB fact!</button>
                 <div id="fact" class="fact">Click the button to learn a fun fact!</div>
             </div>
+            <audio id="jbSound" src="sounds/pop.mp3" preload="auto"></audio>
 
         </section>
 
@@ -1005,43 +1107,49 @@
 
             factBtn.addEventListener('click', () => {
                 const idx = Math.floor(Math.random() * factsList.length);
+                factBox.classList.remove('pop'); // reset animation
+                void factBox.offsetWidth; // trigger reflow
                 factBox.textContent = factsList[idx];
+                factBox.classList.add('pop'); // trigger animation
             });
+
+            document.getElementById('jbSound').play();
+
 
         </script>
 
-<!-- Lightbox Modal for Enlarging Polaroid -->
-<div id="lightbox" class="lightbox">
-  <span class="close">&times;</span>
-  <img class="lightbox-img" src="" alt="Enlarged polaroid">
-</div>
+        <!-- Lightbox Modal for Enlarging Polaroid -->
+        <div id="lightbox" class="lightbox">
+            <span class="close">&times;</span>
+            <img class="lightbox-img" src="" alt="Enlarged polaroid">
+        </div>
 
-<script>
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.querySelector('.lightbox-img');
-  const closeBtn = document.querySelector('.lightbox .close');
+        <script>
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.querySelector('.lightbox-img');
+            const closeBtn = document.querySelector('.lightbox .close');
 
-  // Make polaroid images clickable
-  document.querySelectorAll('.polaroid img').forEach(img => {
-    img.style.cursor = 'zoom-in'; // optional: visual cue
-    img.addEventListener('click', () => {
-      lightboxImg.src = img.src;
-      lightbox.style.display = 'flex';
-    });
-  });
+            // Make polaroid images clickable
+            document.querySelectorAll('.polaroid img').forEach(img => {
+                img.style.cursor = 'zoom-in'; // optional: visual cue
+                img.addEventListener('click', () => {
+                    lightboxImg.src = img.src;
+                    lightbox.style.display = 'flex';
+                });
+            });
 
-  // Close lightbox
-  closeBtn.addEventListener('click', () => {
-    lightbox.style.display = 'none';
-  });
+            // Close lightbox
+            closeBtn.addEventListener('click', () => {
+                lightbox.style.display = 'none';
+            });
 
-  // Click outside image to close
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) {
-      lightbox.style.display = 'none';
-    }
-  });
-</script>
+            // Click outside image to close
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                }
+            });
+        </script>
 
 
 </body>
