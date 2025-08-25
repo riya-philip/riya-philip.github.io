@@ -1111,9 +1111,10 @@
                 void factBox.offsetWidth; // trigger reflow
                 factBox.textContent = factsList[idx];
                 factBox.classList.add('pop'); // trigger animation
+                document.getElementById('jbSound').play();
+
             });
 
-            document.getElementById('jbSound').play();
 
 
         </script>
