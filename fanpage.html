@@ -82,6 +82,9 @@
             --accent-3: #ff7aa2;
             /* rosy */
             --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --text: #ffffff;
+            --hero-text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            /* other vars... */
         }
 
         /* Light mode variables (toggled via .light on <html>) */
@@ -95,6 +98,15 @@
             --accent-2: #8b5cff;
             --accent-3: #ff6b9b;
         }
+
+
+
+
+        [data-theme="light"] {
+            --text: #111111;
+            --hero-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
 
         * {
             box-sizing: border-box;
@@ -234,29 +246,34 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* center horizontally */
             gap: 1.2em;
             max-width: 700px;
             margin: 0 auto;
+            text-align: center;
+            /* ✅ Ensure all child text is centered */
         }
+
 
         .title {
             font-family: 'Poppins', sans-serif;
             font-size: clamp(3rem, 8vw, 5rem);
             font-weight: 900;
             letter-spacing: 0.03em;
-            color: #fff;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-            margin: 0;
+            color: var(--text);
+            text-shadow: var(--hero-text-shadow);
+            margin-bottom: 0.3em;
             line-height: 1.1;
         }
 
         .subtitle {
             font-family: 'Poppins', sans-serif;
-            color: rgba(255, 255, 255, 0.85);
-            margin: 0;
+            color: var(--text);
+            opacity: 0.85;
+            margin: 0.2em 0;
+            line-height: 1.2;
             max-width: 700px;
             text-align: center;
+            /* ✅ Force centering for all subtitles */
         }
 
         /* Pop icon line — slightly larger and bolder */
