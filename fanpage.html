@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Justin Bieber – Fan Hub</title>
+
+    <!--
+    ✨ WHAT'S INSIDE (quick map so you can modify fast):
+    - CSS VARIABLES (color theme): :root { --bg, --glass, --accent, ... }
+    - NAV (sticky, progress bar, theme toggle)
+    - HERO (aurora gradient + CTA)
+    - MUSIC (cards -> opens YouTube modal)
+    - GALLERY (3D coverflow carousel)
+    - COMMUNITY (sticky notes board with localStorage)
+    - EXTRAS (fun facts, back-to-top, intersection animations)
+    - JS at bottom has clearly labeled sections matching the above.
+  -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lobster&display=swap"
+        rel="stylesheet">
+
+
+    <style>
+        /* ==========================
+       THEME & RESET
+       Change the vibe by editing the CSS variables below.
+    ========================== */
+
+        /* Section Headings */
+        /* Reusable Section Title Styling */
+
+        .section-title {
+            text-align: center;
+            margin: 3rem auto 2rem;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+
+            background: linear-gradient(90deg, var(--accent, #ff5fa2), var(--accent-2, #ffc1e3));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+
+            display: block;
+            width: 100%;
+        }
+
+
+        .section-title::after {
+            content: "";
+            display: block;
+            margin: 8px auto 0;
+            width: 200px;
+            /* fixed width looks neater */
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent, #ff5fa2), var(--accent-2, #ffc1e3));
+            border-radius: 2px;
+        }
+
+
+
+
+        :root {
+            --bg: #0b0d12;
+            --text: #eaf1ff;
+            --muted: #b5c0d0;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.14);
+            --accent: #7cf6e7;
+            /* minty cyan */
+            --accent-2: #a77bff;
+            /* soft purple */
+            --accent-3: #ff7aa2;
+            /* rosy */
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+        }
+
+        /* Light mode variables (toggled via .light on <html>) */
+        html.light {
+            --bg: #f7f8fb;
+            --text: #111419;
+            --muted: #475569;
+            --glass: rgba(17, 20, 25, 0.06);
+            --glass-border: rgba(17, 20, 25, 0.08);
+            --accent: #5b9dff;
+            --accent-2: #8b5cff;
+            --accent-3: #ff6b9b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* Subtle aurora backdrop */
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -20vh -20vw auto auto;
+            width: 60vw;
+            height: 60vh;
+            z-index: -2;
+            background: radial-gradient(60% 60% at 30% 40%, rgba(124, 246, 231, .25), transparent 60%),
+                radial-gradient(50% 50% at 70% 70%, rgba(167, 123, 255, .22), transparent 60%);
+            filter: blur(60px);
+        }
+
+        body::after {
+            inset: auto auto -20vh -20vw;
+        }
+
+        /* ==========================
+       NAV + PROGRESS + THEME TOGGLE
+    ========================== */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(14px);
+            background: linear-gradient(180deg, rgba(0, 0, 0, .45), rgba(0, 0, 0, .15));
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 18px;
+        }
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: .06em;
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        .links {
+            display: flex;
+            gap: 22px;
+        }
+
+        .links a {
+            opacity: .9;
+            transition: .25s;
+            font-weight: 600;
+        }
+
+        .links a:hover {
+            color: var(--accent);
+            opacity: 1;
+        }
+
+        /* Theme toggle */
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Scroll progress bar */
+        .progress {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            width: 0;
+        }
+
+        /* ==========================
+       LAYOUT HELPERS
+    ========================== */
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 18px;
+        }
+
+        .section {
+            margin: 70px 0;
+        }
+
+        .glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* ==========================
+       HERO
+    ========================== */
+        .hero-card {
+            padding: 42px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* center horizontally */
+            gap: 1.2em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            letter-spacing: 0.03em;
+            color: #fff;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-family: 'Poppins', sans-serif;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 0;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        /* Pop icon line — slightly larger and bolder */
+        .subtitle.pop-icons {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            opacity: 0.9;
+        }
+
+        /* Welcome line — normal weight, smaller size */
+        .subtitle.welcome {
+            font-size: 1.05rem;
+            font-weight: 400;
+            opacity: 0.75;
+            line-height: 1.3;
+        }
+
+        /* Hashtag line — smaller, bold, accent color */
+        .subtitle.hashtag {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ff77aa;
+            /* pink accent */
+            letter-spacing: 0.1em;
+            margin-top: 0.5em;
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            /* a bit more gap between icon and text if any */
+            padding: 16px 28px;
+            /* increased padding for bigger button */
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            /* slightly larger font */
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #061018;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s;
+            margin-top: 1.5em;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .cta:hover {
+            transform: translateY(-2px);
+        }
+
+
+
+        /* ==========================
+       MUSIC – Cards grid -> YouTube modal
+    ========================== */
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .section-head h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+        }
+
+        .chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            font-size: .9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-media {
+            aspect-ratio: 1 / 1;
+            background: #000;
+        }
+
+        .card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(1.1) contrast(1.05);
+            transition: .35s;
+        }
+
+        .card:hover .card-media img {
+            transform: scale(1.06);
+        }
+
+        .card-body {
+            padding: 14px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+        }
+
+        .play {
+            margin-top: 6px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
+            color: #0b0d12;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* Video modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+        }
+
+        .modal-inner {
+            width: min(900px, 92vw);
+            background: #0c0f15;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .iframe-wrap {
+            aspect-ratio: 16/9;
+        }
+
+        .iframe-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        /* ==========================
+       GALLERY – 3D coverflow carousel (keyboard, click, auto)
+    ========================== */
+        .polaroid-gallery {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            /* Use a single value for both row & column spacing */
+            margin-top: 2rem;
+            align-items: flex-start;
+        }
+
+
+        .polaroid {
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            max-width: 200px;
+            border: 2px solid #eee;
+            text-align: center;
+            /* Ensures caption and image are centered */
+        }
+
+        /* Individual rotation for variety */
+        .polaroid:nth-child(1) {
+            transform: rotate(-5deg);
+        }
+
+        .polaroid:nth-child(2) {
+            transform: rotate(1deg);
+        }
+
+        .polaroid:nth-child(3) {
+            transform: rotate(5deg);
+        }
+
+        /* Add more if you have more polaroids */
+
+        .polaroid img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .polaroid .caption {
+            margin-top: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+
+
+        /* ==========================
+       COMMUNITY – Sticky Notes Board
+    ========================== */
+        /* Secret Message Section */
+        .secret-section {
+            margin: 70px auto;
+            padding: 42px 30px;
+            max-width: 700px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            color: var(--text);
+        }
+
+        .secret-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .secret-section textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text);
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 18px;
+        }
+
+        .secret-section button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #061018;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 1rem;
+            margin: 0 auto;
+        }
+
+        .secret-section button:hover {
+            transform: translateY(-2px);
+        }
+
+        .secret-confirmation {
+            margin-top: 16px;
+            text-align: center;
+            font-style: italic;
+            color: var(--accent);
+        }
+
+
+
+        /* ==========================
+       FUN FACT + BACK TO TOP
+    ========================== */
+        .facts {
+            display: grid;
+            place-items: center;
+            text-align: center;
+            gap: 10px;
+            padding-bottom: 3rem;
+            /* Add space below the whole container */
+        }
+
+        .fact {
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            /* translucent white */
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            max-width: 600px;
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+            margin-top: 0.5rem;
+            user-select: none;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+
+        #factBtn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            /* slightly bigger but consistent */
+            padding: 12px 22px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #061018;
+            border: none;
+            transition: transform 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #factBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+
+
+        .top {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: .25s;
+            z-index: 40;
+        }
+
+
+        .top.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================
+       SCROLL REVEAL ANIMATIONS
+    ========================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: .6s ease;
+        }
+
+        .reveal.show {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 720px) {
+            .note-form {
+                grid-template-columns: 1fr;
+            }
+
+            .coverflow {
+                height: 380px;
+            }
+
+            .slide {
+                width: 220px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="brand">JUSTIN • FAN HUB</div>
+            <div class="spacer"></div>
+            <div class="links">
+                <a href="#hero">Home</a>
+                <a href="#music">Music</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#secret">Secret to JB</a>
+                <a href="#facts">Facts</a>
+            </div>
+            <button id="themeToggle" class="toggle" title="Toggle theme">🌓 <span
+                    style="opacity:.8">Theme</span></button>
+        </div>
+        <div class="progress" id="progress"></div>
+    </nav>
+
+    <!-- HERO -->
+    <header id="hero" class="hero wrap">
+        <div class="hero-card glass reveal">
+            <div class="hero-img">
+                <img src="justin1.webp" alt="Justin Bieber portrait" />
+            </div>
+            <h1 class="title">Justin Bieber</h1>
+            <p class="subtitle pop-icons">Pop icon. Performer. Songwriter.</p>
+            <p class="subtitle welcome">Welcome to a fan-built space celebrating the music, moments, and community.</p>
+            <p class="subtitle hashtag">#BeliebersAroundTheWorld</p>
+
+            <button class="cta" onclick="document.querySelector('#music').scrollIntoView({behavior:'smooth'})">Start
+                with the hits →</button>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <!-- MUSIC -->
+        <section id="music" class="section reveal">
+            <h2 class="section-title">Hit Videos</h2>
+
+            <div class="grid">
+                <!-- Card example (change videoId to any YT id) -->
+                <article class="card glass">
+                    <div class="card-media"><img src="https://i.ytimg.com/vi/kffacxfA7G4/hqdefault.jpg"
+                            alt="Baby thumbnail"></div>
+                    <div class="card-body">
+                        <h3>Baby</h3>
+                        <small class="muted">2010 • My World 2.0</small>
+                        <button class="play" data-title="Baby" data-id="kffacxfA7G4">▶ Play</button>
+                    </div>
+                </article>
+                <article class="card glass">
+                    <div class="card-media"><img src="https://i.ytimg.com/vi/fRh_vgS2dFE/hqdefault.jpg"
+                            alt="Sorry thumbnail"></div>
+                    <div class="card-body">
+                        <h3>Sorry</h3>
+                        <small class="muted">2015 • Purpose</small>
+                        <button class="play" data-title="Sorry" data-id="fRh_vgS2dFE">▶ Play</button>
+                    </div>
+                </article>
+                <article class="card glass">
+                    <div class="card-media"><img src="https://i.ytimg.com/vi/DK_0jXPuIr0/hqdefault.jpg"
+                            alt="What Do You Mean thumbnail"></div>
+                    <div class="card-body">
+                        <h3>What Do You Mean?</h3>
+                        <small class="muted">2015 • Purpose</small>
+                        <button class="play" data-title="What Do You Mean?" data-id="DK_0jXPuIr0">▶ Play</button>
+                    </div>
+                </article>
+                <article class="card glass">
+                    <div class="card-media"><img src="https://i.ytimg.com/vi/tQ0yjYUFKAE/hqdefault.jpg"
+                            alt="Peaches thumbnail"></div>
+                    <div class="card-body">
+                        <h3>Peaches</h3>
+                        <small class="muted">2021 • Justice</small>
+                        <button class="play" data-title="Peaches" data-id="tQ0yjYUFKAE">▶ Play</button>
+                    </div>
+                </article>
+                <article class="card glass">
+                    <div class="card-media"><img src="https://i.ytimg.com/vi/Fp8msa5uYsc/hqdefault.jpg"
+                            alt="Ghost thumbnail"></div>
+                    <div class="card-body">
+                        <h3>Ghost</h3>
+                        <small class="muted">2021 • Justice</small>
+                        <button class="play" data-title="Ghost" data-id="Fp8msa5uYsc">▶ Play</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- VIDEO MODAL -->
+        <div id="videoModal" class="modal" aria-hidden="true">
+            <div class="modal-inner glass">
+                <div class="modal-top">
+                    <strong id="modalTitle">Playing…</strong>
+                    <button class="close" id="closeModal" aria-label="Close">✕</button>
+                </div>
+                <div class="iframe-wrap">
+                    <iframe id="ytFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- GALLERY: coverflow -->
+        <section id="gallery">
+            <h2 class="section-title">Polaroid Memories</h2>
+            <div class="polaroid-gallery">
+                <div class="polaroid">
+                    <img src="justin2.jpg" alt="Justin on Stage">
+                    <span class="caption">On Stage ✨</span>
+                </div>
+                <div class="polaroid">
+                    <img src="bieber4.webp" alt="Justin Smiling">
+                    <span class="caption">That Smile 💜</span>
+                </div>
+                <div class="polaroid">
+                    <img src="justin1.jpg" alt="Chill Justin">
+                    <span class="caption">Chill Guy 🔥</span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- COMMUNITY: sticky notes board -->
+        <section id="secret" class="secret-section reveal glass">
+            <h2>Write a Secret Message to Justin</h2>
+            <form id="secretForm">
+                <textarea id="secretMessage" placeholder="Pour your heart out… 💌" required></textarea>
+                <button type="submit">Send Secret Message →</button>
+            </form>
+            <div class="secret-confirmation" id="secretConfirmation" style="display:none;">Justin has received your
+                message (in spirit!) 💫
+            </div>
+        </section>
+
+
+        <script>
+            document.getElementById('secretForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                document.getElementById('secretMessage').value = '';
+                const confirmation = document.getElementById('secretConfirmation');
+                confirmation.style.display = 'block';
+                setTimeout(() => confirmation.style.display = 'none', 4000);
+            });
+
+        </script>
+
+
+        <!-- FUN FACTS -->
+        <section id="facts">
+            <h2 class="section-title">Fun Facts</h2>
+
+            <div class="facts">
+                <button id="factBtn">Tell me a JB fact!</button>
+                <div id="fact" class="fact">Click the button to learn a fun fact!</div>
+            </div>
+
+        </section>
+
+
+        <!-- Back to top -->
+        <button id="toTop" class="top" title="Back to top">↑</button>
+
+        <script>
+            /* ==========================
+               JS: THEME, NAV, PROGRESS, REVEAL
+            ========================== */
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('jb-theme');
+            if (savedTheme === 'light') html.classList.add('light');
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('light');
+                localStorage.setItem('jb-theme', html.classList.contains('light') ? 'light' : 'dark');
+            });
+
+            // Scroll progress bar
+            const progress = document.getElementById('progress');
+            addEventListener('scroll', () => {
+                const h = document.documentElement;
+                const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+                progress.style.width = (scrolled * 100) + '%';
+            }, { passive: true });
+
+            // Back to top button
+            const toTop = document.getElementById('toTop');
+            addEventListener('scroll', () => {
+                toTop.classList.toggle('show', window.scrollY > 600);
+            }, { passive: true });
+            toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+            // Intersection-based reveal animations
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => e.target.classList.toggle('show', e.isIntersecting));
+            }, { threshold: .2 });
+            document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+            // Smooth nav links
+            document.querySelectorAll('.links a').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            /* ==========================
+               JS: MUSIC MODAL (YouTube)
+               - Click a .play button to open modal
+               - Esc / backdrop click closes modal
+            ========================== */
+            const modal = document.getElementById('videoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const ytFrame = document.getElementById('ytFrame');
+            const closeModal = document.getElementById('closeModal');
+
+            function openVideo(title, id) {
+                modalTitle.textContent = title;
+                ytFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            function hideModal() {
+                modal.style.display = 'none';
+                ytFrame.src = '';
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('.play').forEach(btn => {
+                btn.addEventListener('click', () => openVideo(btn.dataset.title, btn.dataset.id));
+            });
+            closeModal.addEventListener('click', hideModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+            addEventListener('keydown', (e) => { if (e.key === 'Escape') hideModal(); });
+
+            /* ==========================
+               JS: COVERFLOW GALLERY
+               - Maintains an active index; positions neighbors in 3D.
+               - Keyboard arrows & auto-advance supported.
+            ========================== */
+            const slides = Array.from(document.querySelectorAll('.slide'));
+            const dotsWrap = document.getElementById('gDots');
+            const prev = document.getElementById('gPrev');
+            const next = document.getElementById('gNext');
+            let gi = 0; // gallery index
+            let autoTimer;
+
+            function buildDots() {
+                slides.forEach((_, i) => {
+                    const d = document.createElement('div'); d.className = 'dot';
+                    d.addEventListener('click', () => { gi = i; layout(); resetAuto(); });
+                    dotsWrap.appendChild(d);
+                });
+            }
+            function layout() {
+                const center = gi;
+                slides.forEach((el, i) => {
+                    const diff = i - center;
+                    const abs = Math.abs(diff);
+                    let z = 10 - abs;
+                    let x = diff * 160;
+                    let rot = diff * -12;
+                    let scale = Math.max(0.6, 1 - abs * 0.1);
+                    const op = abs > 3 ? 0 : 1 - (abs * 0.18);
+                    el.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${rot}deg) scale(${scale})`;
+                    el.style.opacity = op;
+                    el.style.filter = abs === 0 ? 'none' : 'grayscale(.1) brightness(.9)';
+                });
+                // dots
+                dotsWrap.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === gi));
+            }
+            function step(dir) { gi = (gi + dir + slides.length) % slides.length; layout(); resetAuto(); }
+            function resetAuto() { clearInterval(autoTimer); autoTimer = setInterval(() => step(1), 4000); }
+
+            prev.addEventListener('click', () => step(-1));
+            next.addEventListener('click', () => step(1));
+            addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+            slides.forEach((el, i) => el.addEventListener('click', () => { gi = i; layout(); resetAuto(); }));
+            buildDots(); layout(); resetAuto();
+
+        </script>
+
+
+        <script>
+            /* ==========================
+                   JS: FUN FACTS
+                   ========================== */
+            const factsList = [
+                'Discovered on YouTube by Scooter Braun.',
+                'Plays guitar, piano, drums, and trumpet.',
+                'Middle name is Drew.',
+                'Recorded “One Time” in one take.',
+                'Was the youngest to have 5 #1 albums.',
+                'Fluent in French.',
+                'First to break 10 billion views on Vevo.',
+            ];
+            const factBtn = document.getElementById('factBtn');
+            const factBox = document.getElementById('fact');
+
+            factBtn.addEventListener('click', () => {
+                const idx = Math.floor(Math.random() * factsList.length);
+                factBox.textContent = factsList[idx];
+            });
+
+        </script>
+</body>
+
+</html>
