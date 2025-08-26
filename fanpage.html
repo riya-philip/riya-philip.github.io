@@ -19,7 +19,8 @@
   -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lobster&display=swap"
         rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Roboto:wght@300;400;700;900&display=swap"
+        rel="stylesheet">
 
 
     <!-- Animated Background -->
@@ -822,6 +823,18 @@
                 opacity: 0;
             }
         }
+
+        .sparkle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 90;
+            mix-blend-mode: screen;
+            opacity: 0.95;
+        }
     </style>
 </head>
 
@@ -1133,6 +1146,34 @@
                 document.getElementById('jbSound').play();
 
             });
+
+           /* ===========================
+       Glitter cursor (small sparkles that follow mouse)
+       =========================== */
+    (function(){
+      const colors = ['#8ef0d6','#ffd07a','#ff9ab1','#d6b8ff'];
+      document.addEventListener('mousemove', e=>{
+        // occasionally create sparkles to keep perf OK
+        if(Math.random() < 0.25) {
+          const s = document.createElement('div');
+          s.className = 'sparkle';
+          s.style.left = e.clientX + 'px';
+          s.style.top = e.clientY + 'px';
+          s.style.background = colors[Math.floor(Math.random()*colors.length)];
+          s.style.width = Math.random()*8 + 6 + 'px';
+          s.style.height = s.style.width;
+          s.style.opacity = 0.95;
+          s.style.transform = 'translate(-50%,-50%) scale(0.8)';
+          document.body.appendChild(s);
+          // animate fade+scale
+          s.animate([
+            { transform:'translate(-50%,-50%) scale(0.6)', opacity:1 },
+            { transform:'translate(-50%,-120%) scale(1.6)', opacity:0 }
+          ], { duration:900 + Math.random()*600, easing:'cubic-bezier(.2,.8,.2,1)'});
+          setTimeout(()=> s.remove(), 1600);
+        }
+      });
+    })();
 
 
 
