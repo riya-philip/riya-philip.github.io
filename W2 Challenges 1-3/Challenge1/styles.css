@@ -1,0 +1,156 @@
+/* styles.css - Challenge #1 (Skeleton) */
+
+body {
+    background-color: rgb(240, 247, 255);
+    margin: 0px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    /* max-width: 800px; dont include this restricts size */ 
+
+}
+
+/* corr: include this, applies to whole div */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    color: rgb(255, 0, 72);
+    font-size: 3em;
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+.tagline {
+    font-style: italic;
+    text-align: center;
+    margin: 20px;
+    color:#333333;
+}
+
+
+/* corr: */
+p {
+    line-height: 1.6;
+    font-size: 1rem;
+    margin: 0 0 16px 0;
+}
+
+/* what does this do? no change? */
+/* .hero {
+    border-radius: 50%;
+} */
+
+
+.mascot-placeholder {
+    margin: auto;
+    width: 250px;
+    background: #ffffff;
+    border: 2px solid #333333;
+    border-radius: 20px;
+}
+
+#mascot-image {
+    width: 200px;
+    display: block;
+    margin: auto;
+}
+/* dont add the border to image */
+
+
+/* section.about { */
+    /* align-items: center; */
+    /* align-items only works on flex containers, section.about is not a flex container so it does nothing */
+    /* text-align: center;
+    padding: 20px;
+
+    Not needed?? if not gets center aligned?
+} */
+
+
+.actions {
+    padding: 10px;
+    /* align-items: center; */
+    /* does nothing, it aligns items vertically*/
+
+    margin: 0px;
+
+    display: flex;
+    
+    justify-content: center;
+    /* Centers buttons horizontally */
+    
+    gap: 10px;
+    /* Optional: adds space between buttons */
+
+    flex-wrap: wrap;
+    /* when changing screen size */
+}
+
+/* easier way */
+.actions {
+    text-align: center;
+    margin: 12px 0 28px 0;
+}
+
+button.buy-tickets {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;    
+    /* how to add animation and glow and others? corr: */
+    transition: background 120ms ease, transform 80ms ease;
+    box-shadow: 0 2px 12px rgb(0, 229, 255);
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+
+/* corr: */
+.buy-tickets:hover {
+    background-color: #139929;
+    cursor: pointer;
+    transform: translateY(-1px);
+}
+
+/* basic button:
+    button.make-donation {
+    background-color: blue;
+    color: white;
+    border-radius: 5%;
+    margin: 5px;
+} */
+
+.make-donation {
+    padding: 12px 20px;
+    background-color: #2a18c8;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgb(245, 3, 216);
+    transition: background 120ms ease, transform 80ms ease;margin-right: 20px;
+    margin-bottom: 20px;    }
+
+.make-donation:hover {
+    background-color: #131e99;
+    cursor: pointer;
+    transform: translateY(-1px);
+}
+
+.site-footer {
+    text-align: center;
+    padding: 10px;
+    color: gray;
+    /* corr: */
+    border-top: 1px solid #e7e7e7;
+    padding-top: 16px;
+    margin-top: 24px;
+
+}
